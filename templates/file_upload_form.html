@@ -1,0 +1,15 @@
+<html>
+  <head>
+    <title>File upload</title>
+  </head>
+  <body>
+    <h1>File upload</h1>
+    <form action="/upload" method="post" enctype="multipart/form-data">
+      <input type="file" name="file">
+      <br>
+      <input type="submit" value="Upload">
+    </form>
+    <p>Or using curl:
+      <br><code>curl -X POST -F "file=@/path/to/your/file.txt" http://hostname:5000/upload</code></p>
+  </body>
+</html>
