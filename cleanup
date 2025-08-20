@@ -1,0 +1,12 @@
+#!/bin/bash
+
+SUDO=
+
+if [ $(test -r /var/run/docker.sock; echo "$?") -ne 0 ]; then
+    SUDO="sudo"
+fi
+
+$SUDO docker stop flask-file-upload -t 3 2>/dev/null
+$SUDO docker rm flask-file-upload 2>/dev/null
+
+$SUDO docker rmi -f flask-file-upload:latest
