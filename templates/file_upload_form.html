@@ -1,23 +1,98 @@
+<!DOCTYPE html>
 <html>
-    <head>
-        <title>File upload</title>
-    </head>
-    <body>
-        <h1>File upload</h1>
-        <form action="/upload" method="post" enctype="multipart/form-data">
-            <input type="file" name="file">
-            <br>
-            <input type="submit" value="Upload">
-        </form>
-        <br>
-        <p>Or using curl:<br>
-            <pre><code id="curl">Loading curl command...</code></pre>
-        </p>
-        <script>
-            const host = window.location.host;
-            const protocol = window.location.protocol;
-            const curl = `curl -X POST -F "file=@/path/to/your/file.txt" ${protocol}//${host}/upload`;
-            document.getElementById('curl').textContent = curl;
-        </script>
-    </body>
+	<head>
+		<title>File upload</title>
+		<style>
+			body { font-family: Arial, sans-serif; margin: 40px; }
+			#progress-container {
+				width: 100%;
+				background-color: #eee;
+				border-radius: 5px;
+				overflow: hidden;
+				margin-top: 10px;
+			}
+			#progress-bar {
+				width: 0%;
+				height: 20px;
+				background-color: #4CAF50;
+				text-align: center;
+				color: white;
+				line-height: 20px;
+				border-radius: 5px;
+			}
+			#status { margin-top: 10px; }
+		</style>
+	</head>
+	<body>
+		<h1>File upload</h1>
+
+		<form id="uploadForm">
+			<input type="file" name="file" id="fileInput" required>
+			<br><br>
+			<button type="submit">Upload</button>
+		</form>
+
+		<div id="progress-container">
+			<div id="progress-bar">0%</div>
+		</div>
+
+		<p id="status"></p>
+
+		<hr>
+
+		<p>Or using curl:</p>
+		<pre><code id="curl">Loading curl command...</code></pre>
+
+		<script>
+			const host = window.location.host;
+			const protocol = window.location.protocol;
+			const curl = `curl -X POST -F "file=@/path/to/your/file.txt" ${protocol}//${host}/upload`;
+			document.getElementById('curl').textContent = curl;
+			
+			const form = document.getElementById('uploadForm');
+			const progressBar = document.getElementById('progress-bar');
+			const statusText = document.getElementById('status');
+			
+			form.addEventListener('submit', function(e) {
+				e.preventDefault();
+				
+				const fileInput = document.getElementById('fileInput');
+				if (!fileInput.files.length) {
+					alert("Please select a file first.");
+					return;
+				}
+				
+				const file = fileInput.files[0];
+				const formData = new FormData();
+				formData.append("file", file);
+				
+				const xhr = new XMLHttpRequest();
+				xhr.open("POST", "/upload", true);
+				
+				// Update progress bar
+				xhr.upload.addEventListener("progress", (event) => {
+					if (event.lengthComputable) {
+						const percent = (event.loaded / event.total) * 100;
+						progressBar.style.width = percent.toFixed(1) + "%";
+						progressBar.textContent = Math.round(percent) + "%";
+					}
+					});
+					
+					xhr.onload = function() {
+						if (xhr.status === 200) {
+							const res = JSON.parse(xhr.responseText);
+							statusText.textContent = "✅ Upload complete: " + res.filename;
+							} else {
+								statusText.textContent = "❌ Upload failed.";
+							}
+							};
+							
+							xhr.onerror = function() {
+								statusText.textContent = "❌ Network error.";
+								};
+								
+								xhr.send(formData);
+								});
+		</script>
+	</body>
 </html>

@@ -4,7 +4,11 @@ COPY ./requirements.txt /tmp/requirements.txt
 
 RUN pip install -r /tmp/requirements.txt
 
+RUN useradd -M user
+
 COPY ./app.py /app.py
 COPY ./templates/ /templates/
+
+USER user
 
 ENTRYPOINT [ "python", "/app.py" ]
