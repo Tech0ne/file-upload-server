@@ -4,7 +4,7 @@ COPY ./requirements.txt /tmp/requirements.txt
 
 RUN pip install -r /tmp/requirements.txt
 
-RUN useradd -M user
+RUN addgroup -S user && adduser -S user -G user
 
 COPY ./app.py /app.py
 COPY ./templates/ /templates/

@@ -44,8 +44,7 @@ file_size: {get_file_size(file)}
     with open(os.path.join("uploads", f"{fname}.data"), "wb+") as f:
         f.write(file.read())
 
-    print(f"Saved file {
-          file.filename} as uploads/{fname}.data", file=sys.stderr)
+    print(f"Saved file {file.filename} as uploads/{fname}.data", file=sys.stderr)
 
     return jsonify({"status": "success", "filename": file.filename})
 
